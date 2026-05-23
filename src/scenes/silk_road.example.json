@@ -1,0 +1,59 @@
+{
+  "id": "silk_road",
+  "page": 14,
+  "title": "The Silk Road",
+  "topic": "How trade routes connected China, Central Asia, and the Mediterranean from roughly 130 BCE onward.",
+  "steps": [
+    {
+      "type": "set_background",
+      "asset": "asia_europe_map",
+      "note": "Wide regional map. Teacher reads the introductory paragraph while this state holds."
+    },
+    {
+      "type": "highlight_region",
+      "region": "china",
+      "label": "China",
+      "color": "amber",
+      "duration": 1200,
+      "note": "Anchors the eastern end of the route as the teacher names it."
+    },
+    {
+      "type": "highlight_region",
+      "region": "rome",
+      "label": "Roman Empire",
+      "color": "rose",
+      "duration": 1200,
+      "note": "Western anchor. Teacher names Rome as the destination market for silk."
+    },
+    {
+      "type": "trace_route",
+      "from": "xian",
+      "to": "rome",
+      "via": ["dunhuang", "samarkand", "tehran", "antioch"],
+      "duration": 5000,
+      "color": "amber",
+      "label": "The Silk Road",
+      "pauseAfter": 4000,
+      "note": "Long trace gives the teacher time to describe the journey. Linear motion; do not ease."
+    },
+    {
+      "type": "annotation",
+      "text": "Silk · spices · paper · ideas · religion",
+      "position": "midpoint",
+      "duration": 1000,
+      "note": "What flowed along the route. Symbolic, not pictorial. No images of goods."
+    },
+    {
+      "type": "timeline_marker",
+      "year": "130 BCE",
+      "event": "Han dynasty formally opens the route",
+      "note": "Locates the route in time. First marker on this page's timeline."
+    },
+    {
+      "type": "timeline_marker",
+      "year": "200 CE",
+      "event": "Peak of east–west trade",
+      "note": "Shows the duration of the system, not just its start."
+    }
+  ]
+}

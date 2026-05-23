@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+/* The scene fills the projector edge to edge with no scrollbars competing for
+   attention. The dark background is painted before React mounts so there is no
+   white flash on a cold load in a darkened classroom. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #0a0a0a;
+}
