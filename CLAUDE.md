@@ -80,7 +80,11 @@ If you ever find yourself wanting to put logic inside a scene file, instead crea
 - Target hardware: 5-year-old classroom laptops driving 1080p projectors
 - Test on Chrome (Chromium) as primary target; Firefox and Safari are nice-to-have
 - Animations must run smoothly at 60fps on the above
-- Prefer SVG over Canvas; never use WebGL
+- Rendering technology:
+  - SVG for spatial and geometric content: maps, routes, arrows, lines, shapes, regions
+  - HTML + CSS for text-bearing content: boxes with wrapping text, labels, annotations, captions
+  - Framer Motion handles animation for both
+  - Never use Canvas or WebGL
 - Animate `transform` and `opacity` only; avoid layout thrashing
 
 ## Projector design rules
