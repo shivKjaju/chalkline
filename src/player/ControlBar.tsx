@@ -10,6 +10,8 @@ interface ControlBarProps {
   /** A navigation key press to acknowledge. The nonce changes on every press so
    *  repeated presses of the same key re-trigger the highlight. */
   pulse: { action: NavAction; nonce: number } | null;
+  /** Optional scene title and position readout. */
+  status?: { title: string; step: number; total: number };
 }
 
 /** How long a navigation key stays highlighted after it is pressed (ms). */
@@ -17,7 +19,7 @@ const PULSE_MS = 450;
 
 /** The control overlay: a quiet legend of the locked key bindings, shown along
  *  the bottom edge and hidden with Esc. Operator chrome, not scene content. */
-export function ControlBar({ dimmed, pulse }: ControlBarProps) {
+export function ControlBar({ dimmed, pulse, status }: ControlBarProps) {
   const [active, setActive] = useState<NavAction | null>(null);
 
   useEffect(() => {
@@ -29,6 +31,17 @@ export function ControlBar({ dimmed, pulse }: ControlBarProps) {
 
   return (
     <div className="mb-8 flex select-none items-center gap-6 rounded-2xl bg-neutral-900/85 px-6 py-4">
+      {status && (
+        <>
+          <span className="flex items-center gap-2 text-sm">
+            <span className="text-neutral-300">{status.title}</span>
+            <span className="tabular-nums text-neutral-500">
+              {status.step}/{status.total}
+            </span>
+          </span>
+          <Divider />
+        </>
+      )}
       <Control keys={['Space', '→']} label="Next" highlight={active === 'next'} />
       <Control keys={['←']} label="Back" highlight={active === 'prev'} />
       <Divider />

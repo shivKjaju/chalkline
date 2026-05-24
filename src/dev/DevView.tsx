@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CauseEffectChain, type CauseEffectChainNode } from '../primitives/CauseEffectChain';
+import { ScenePlayer } from '../player/ScenePlayer';
+import type { Scene } from '../types/scene';
 import { DIM_FADE_MS, DIM_OPACITY } from '../motion';
 
 /** A short causal chain from the sample chapter, used to exercise the primitive. */
@@ -13,9 +15,39 @@ const SAMPLE: CauseEffectChainNode[] = [
 /** How long a single node's full reveal takes (box fade + arrow trace + slack). */
 const STEP_MS = 1600;
 
-/** Debug-only view (reachable at `?dev=1`) for inspecting primitives in every
- *  state on a real projector, without playing a scene. */
+/** Dev fixture (not chapter content): exercises the player with cause-effect
+ *  nodes plus one unimplemented step that should be skipped with a warning. */
+const FIXTURE: Scene = {
+  id: 'dev-pipeline',
+  page: 0,
+  title: 'Pipeline demo',
+  topic: 'Dev fixture exercising the player end to end.',
+  steps: [
+    { type: 'cause_effect_node', text: 'Silk woven in China' },
+    { type: 'cause_effect_node', text: 'Caravans carry it across Central Asia' },
+    { type: 'annotation', text: 'Goods, ideas, and faiths travel too', position: 'midpoint' },
+    { type: 'cause_effect_node', text: 'Roman markets pay high prices' },
+    { type: 'cause_effect_node', text: 'Trade routes flourish for centuries' },
+  ],
+};
+
+/** Debug-only view (reachable at `?dev=1`) for inspecting primitives and the
+ *  player pipeline on a real projector, without playing the chapter. */
 export default function DevView() {
+  return (
+    <div className="h-full overflow-y-auto bg-[#0a0a0a] px-10 py-8 text-neutral-100">
+      <header className="mb-8">
+        <h1 className="text-3xl font-light">/dev — previews</h1>
+        <p className="mt-1 text-neutral-500">Inspect primitives and the scene player on a real projector.</p>
+      </header>
+      <ChainSection />
+      <PlayerSection />
+    </div>
+  );
+}
+
+/** The cause-effect chain on its own, in every state. */
+function ChainSection() {
   const [reveal, setReveal] = useState(0);
   const [instant, setInstant] = useState(false);
   const [dimmed, setDimmed] = useState(false);
@@ -35,7 +67,7 @@ export default function DevView() {
     setReveal(n);
   };
 
-  // Rebuild the chain from empty, revealing one node at a time so the sequential
+  // Rebuild the chain from empty, one node at a time, so the sequential
   // box-fade-then-arrow-trace can be watched end to end.
   const replay = () => {
     stopReplay();
@@ -51,16 +83,14 @@ export default function DevView() {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-[#0a0a0a] px-10 py-8 text-neutral-100">
-      <header className="mb-6">
-        <h1 className="text-3xl font-light">/dev — cause-effect chain</h1>
-        <p className="mt-1 text-neutral-500">
-          Trigger each state. Steps animate (box fades in, then the arrow traces); turn on Instant for
-          static snapshots.
-        </p>
-      </header>
+    <section>
+      <h2 className="text-2xl font-light">Cause-effect chain</h2>
+      <p className="mt-1 text-neutral-500">
+        Trigger each state. Steps animate (box fades in, then the arrow traces); turn on Instant for
+        static snapshots.
+      </p>
 
-      <div className="mb-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+      <div className="my-4 flex flex-wrap items-center gap-x-8 gap-y-3">
         <Group label="Reveal">
           {Array.from({ length: SAMPLE.length + 1 }, (_, n) => (
             <Btn key={n} active={reveal === n} onClick={() => go(n)}>
@@ -100,7 +130,47 @@ export default function DevView() {
         />
         {blanked && <div aria-hidden className="absolute inset-0 bg-black" />}
       </div>
-    </div>
+    </section>
+  );
+}
+
+/** The scene player walking a fixture scene the way the keyboard would. */
+function PlayerSection() {
+  const [revealed, setRevealed] = useState(0);
+  const total = FIXTURE.steps.length;
+  const lastType = revealed > 0 ? FIXTURE.steps[revealed - 1].type : null;
+  const skipped = lastType !== null && lastType !== 'cause_effect_node';
+
+  return (
+    <section className="mt-12">
+      <h2 className="text-2xl font-light">Scene player — pipeline</h2>
+      <p className="mt-1 text-neutral-500">
+        Steps through a fixture scene as the keyboard does. The chain holds while the unimplemented
+        annotation step is walked over (and logged to the console).
+      </p>
+
+      <div className="my-4 flex flex-wrap items-center gap-x-8 gap-y-3">
+        <Group label="Step">
+          <Btn onClick={() => setRevealed((r) => Math.max(r - 1, 0))}>◀ Prev</Btn>
+          <Btn onClick={() => setRevealed((r) => Math.min(r + 1, total))}>Next ▶</Btn>
+          <Btn onClick={() => setRevealed(0)}>Restart</Btn>
+        </Group>
+        <span className="text-sm text-neutral-500">
+          {revealed} / {total}
+          {lastType && (
+            <span className={skipped ? 'text-amber-300' : 'text-neutral-400'}>
+              {' · '}
+              {lastType}
+              {skipped ? ' (skipped)' : ''}
+            </span>
+          )}
+        </span>
+      </div>
+
+      <div className="relative h-[60vh] min-h-[360px] overflow-hidden rounded-xl border border-neutral-800 bg-[#0a0a0a]">
+        <ScenePlayer scene={FIXTURE} revealed={revealed} />
+      </div>
+    </section>
   );
 }
 
