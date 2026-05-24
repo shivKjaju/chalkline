@@ -108,7 +108,7 @@ If you ever find yourself wanting to put logic inside a scene file, instead crea
 - **Vite** for dev/build
 - **Tailwind CSS** for layout and theming
 - **Framer Motion** for animation
-- **SVG** for all visual primitives
+- **SVG** for geometry (maps, routes, shapes); **HTML + CSS** for text-bearing content — see the rendering-technology rule above
 - No state management library (Zustand/Redux unnecessary at this scope)
 - No router for MVP (single-page app; a `/dev` view can be a conditional render)
 - No backend
